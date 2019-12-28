@@ -44,6 +44,9 @@ class UserController {
         .when('oldPassword', (oldPassword, field) =>
           oldPassword ? field.required() : field
         ),
+      confirmPassword: Yup.string().when('password', (password, field) =>
+        password ? field.required().oneOf([Yup.ref('password')]) : field
+      ),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -70,6 +73,7 @@ class UserController {
     const { id, name, provider } = await user.update(req.body);
 
     return res.json({
+      text: 'Update successful!',
       id,
       username,
       name,
